@@ -4,41 +4,46 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod'
 import { Button } from "@/components/ui/button"
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
+import { Form } from "@/components/ui/form"
 import Image from 'next/image';
 import Link from 'next/link';
-
-const formSchema = z.object({
-  username: z.string().min(2, "Username is required").max(20, "Username must be less than 20 characters"),
-})
+import { toast } from 'sonner';
 
 interface AuthFormProps {
   type?: "sign-in" | "sign-up";
 }
 
-const AuthForm = ({ type }: {type: AuthFormProps}) => {
+const authFormSchema = ({type}:AuthFormProps) => {
+  return z.object({
+    name: type === "sign-up" ? z.string().min(3, "Name is at least 3 characters") : z.string().optional(),
+    email: z.string().email("Invalid email address"),
+    password: z.string().min(6, "Password must be at least 6 character's")
+  })
 
+}
+
+const AuthForm = ({ type }: AuthFormProps) => {
+  const formSchema = authFormSchema({type});
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: "",
+      name: "",
+      email: "",
+      password: "",
     },
   })
 
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values)
+    try {
+      if (type === "sign-up"){
+        console.log("Sign Up", values);
+      }else{
+        console.log("Sign In", values);
+      }
+    }catch (error) {
+      toast.error(`An error occurred while submitting the form.${error}`);
+    }
   }
 
   const isSignIn = type === "sign-in";
