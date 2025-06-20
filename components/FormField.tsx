@@ -1,5 +1,7 @@
 import React from 'react'
-import { Controller, Field, FieldValues, Path } from 'react-hook-form'
+import { Controller, FieldValues, Path } from 'react-hook-form'
+import { Input } from './ui/input';
+import { FormControl, FormDescription, FormItem, FormLabel, FormMessage } from './ui/form';
 
 interface FormFielProps<T extends FieldValues> {
   control: Path<T>; // Replace with the correct type for your control
@@ -10,22 +12,22 @@ interface FormFielProps<T extends FieldValues> {
 }
 
 const FormField = ({control, name, label, placeholder, type="text"}: FormFielProps<T>) => (
-  <Controller>
-    name={name},
+  <Controller
+    name={name}
     control={control}
     render={({ field }) => (
       <FormItem>
-        <FormLabel>Username</FormLabel>
+        <FormLabel className="label">{label}</FormLabel>
         <FormControl>
-          <Input placeholder="shadcn" {...field} />
+          <Input className='input' type={type} placeholder={placeholder} {...field} />
         </FormControl>
-        <FormDescription>
+        {/* <FormDescription>
           This is your public display name.
-        </FormDescription>
+        </FormDescription> */}
         <FormMessage />
       </FormItem>
     )}
-  </Controller>
+  />
 )
 
 export default FormField

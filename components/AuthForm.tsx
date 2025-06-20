@@ -8,6 +8,8 @@ import { Form } from "@/components/ui/form"
 import Image from 'next/image';
 import Link from 'next/link';
 import { toast } from 'sonner';
+import FormField from './FormField';
+import { useRouter } from 'next/navigation';
 
 interface AuthFormProps {
   type?: "sign-in" | "sign-up";
@@ -23,6 +25,7 @@ const authFormSchema = ({type}:AuthFormProps) => {
 }
 
 const AuthForm = ({ type }: AuthFormProps) => {
+  const router = useRouter();
   const formSchema = authFormSchema({type});
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -37,9 +40,11 @@ const AuthForm = ({ type }: AuthFormProps) => {
   function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       if (type === "sign-up"){
-        console.log("Sign Up", values);
+        toast.success("Account created successfully! Please sign in.");
+        router.push('/sign-in');
       }else{
-        console.log("Sign In", values);
+        toast.success("Signed in successfully!");
+        router.push('/');
       }
     }catch (error) {
       toast.error(`An error occurred while submitting the form.${error}`);
@@ -58,9 +63,30 @@ const AuthForm = ({ type }: AuthFormProps) => {
       
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 w-full mt-4 form">
-            {!isSignIn && <p>Name</p>}
-            <p>Email</p>
-            <p>Password</p>
+            {!isSignIn && 
+              <FormField
+                control={form.control}
+                name="name"
+                label="Full Name"
+                placeholder="Enter your name"
+                type="text"
+              />
+            }
+            <FormField
+              control={form.control}
+              name="email"
+              label="Email"
+              placeholder="Enter your email"
+              type="email"
+            />
+            <FormField
+              control={form.control}
+              name="password"
+              label="Password"
+              placeholder="Enter your password"
+              type="password"
+            />
+            
             <Button className='btn' type="submit">{isSignIn ? 'Sign In':'Create an account'}</Button>
           </form>
         </Form>
