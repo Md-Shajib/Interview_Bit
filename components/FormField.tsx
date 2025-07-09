@@ -1,33 +1,48 @@
-import React from 'react'
-import { Controller, FieldValues, Path } from 'react-hook-form'
-import { Input } from './ui/input';
-import { FormControl, FormDescription, FormItem, FormLabel, FormMessage } from './ui/form';
+import { Controller, Control, FieldValues, Path } from "react-hook-form";
 
-interface FormFielProps<T extends FieldValues> {
-  control: Path<T>; // Replace with the correct type for your control
-  name: string;
-  label?: string;
+import {
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+
+interface FormFieldProps<T extends FieldValues> {
+  control: Control<T>;
+  name: Path<T>;
+  label: string;
   placeholder?: string;
-  type?: 'text' | 'email' | 'password'| 'file';
+  type?: "text" | "email" | "password";
 }
 
-const FormField = ({control, name, label, placeholder, type="text"}: FormFielProps<T>) => (
-  <Controller
-    name={name}
-    control={control}
-    render={({ field }) => (
-      <FormItem>
-        <FormLabel className="label">{label}</FormLabel>
-        <FormControl>
-          <Input className='input' type={type} placeholder={placeholder} {...field} />
-        </FormControl>
-        {/* <FormDescription>
-          This is your public display name.
-        </FormDescription> */}
-        <FormMessage />
-      </FormItem>
-    )}
-  />
-)
+const FormField = <T extends FieldValues>({
+  control,
+  name,
+  label,
+  placeholder,
+  type = "text",
+}: FormFieldProps<T>) => {
+  return (
+    <Controller
+      control={control}
+      name={name}
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel className="label">{label}</FormLabel>
+          <FormControl>
+            <Input
+              className="input"
+              type={type}
+              placeholder={placeholder}
+              {...field}
+            />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  );
+};
 
-export default FormField
+export default FormField;
